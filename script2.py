@@ -1,3 +1,4 @@
+
 # This is a simple echo bot using the decorator mechanism.
 # It echoes any incoming text messages.
 
@@ -27,3 +28,24 @@ def send_function3(message):
     /volumen_ggal da el monto en nominales hasta el momento
     /este no existe
 """)
+
+
+    
+# Handle '/funciones
+@bot.message_handler(commands=['volumen_ggal'])
+def send_function1(message):
+    bot.reply_to(message, obtenerVolumenActivo("ggal.ba"))
+
+# Handle '/funciones
+@bot.message_handler(commands=['precio_ggal'])
+def send_function2(message):
+    bot.reply_to(message, obtenerPrecioActivo("ggal.ba"))
+
+
+# Handle all other messages with content_type 'text' (content_types defaults to ['text'])
+@bot.message_handler(func=lambda message: True)
+def echo_message(message):
+    bot.reply_to(message, message.text)
+
+
+bot.polling(none_stop=True)
