@@ -5,10 +5,22 @@
 import telebot
 import yfinance as yf
 
+
+def obtenerVolumenActivo(activo="ggal.ba"):
+  data = yf.download(activo)
+  volumen = data.iloc[-1, -1]
+  precio = data.iloc[-1, -2]
+  return volumen * precio
+
+def obtenerPrecioActivo(activo="ggal.ba"):
+  data = yf.download(activo)
+  precio = data.iloc[-1, -2]
+  return  precio
+
+
 API_TOKEN = '1448700623:AAFyKeGUL3eTFkbHbqTTb9KT87-tX-jBh8s'
 
 bot = telebot.TeleBot(API_TOKEN)
-
 
 # Handle '/start' and '/help'
 @bot.message_handler(commands=['help', 'start'])
