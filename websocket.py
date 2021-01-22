@@ -4,6 +4,8 @@ import asyncio
 import json
 import logging
 import websockets
+import time
+import random
 
 logging.basicConfig()
 
@@ -11,6 +13,8 @@ STATE = {"value": 0}
 
 USERS = set()
 
+def get_btc_ars_price():
+    return json.dumps({"type":"btcars","price":random.randint(3000000, 3600000)})
 
 def state_event():
     return json.dumps({"type": "state", **STATE})
@@ -29,6 +33,11 @@ async def notify_state():
 async def notify_users():
     if USERS:  # asyncio.wait doesn't accept an empty list
         message = users_event()
+        await asyncio.wait([user.send(message) for user in USERS])
+
+async def notify_price():
+    if USERS == 1:  
+        message = get_btc_ars_price()
         await asyncio.wait([user.send(message) for user in USERS])
 
 
@@ -55,6 +64,8 @@ async def counter(websocket, path):
             elif data["action"] == "plus":
                 STATE["value"] += 1
                 await notify_state()
+            elif data["action"] == "suscribe":
+                await notify_price()
             else:
                 logging.error("unsupported event: {}", data)
     finally:
