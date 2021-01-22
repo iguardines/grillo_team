@@ -6,6 +6,7 @@ import logging
 import websockets
 import time
 import random
+import requests as rq
 
 logging.basicConfig()
 
@@ -13,8 +14,12 @@ STATE = {"value": 0}
 
 USERS = set()
 
-def get_btc_ars_price():
-    return json.dumps({"type":"btcars","price":random.randint(3000000, 3600000)})
+def get_btc_usd_price_bitfinex():
+    return rq.get("https://api.bitfinex.com/v1/pubticker/btcusd").json()
+
+
+def get_btc_usd_price():
+    return json.dumps({"type":"btc","md":get_btc_usd_price_bitfinex()})
 
 def state_event():
     return json.dumps({"type": "state", **STATE})
