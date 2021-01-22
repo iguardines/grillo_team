@@ -5,7 +5,6 @@ import json
 import logging
 import websockets
 import time
-import random
 import requests as rq
 
 logging.basicConfig()
@@ -19,7 +18,7 @@ def get_btc_usd_price_bitfinex():
 
 
 def get_btc_usd_price():
-    return json.dumps({"type":"btc","md":get_btc_usd_price_bitfinex()})
+    return json.dumps({"type":"btcusd","md":get_btc_usd_price_bitfinex()})
 
 def state_event():
     return json.dumps({"type": "state", **STATE})
@@ -41,7 +40,7 @@ async def notify_users():
         await asyncio.wait([user.send(message) for user in USERS])
 
 async def notify_price():
-    if USERS == 1:  
+    if USERS:  
         message = get_btc_usd_price()
         await asyncio.wait([user.send(message) for user in USERS])
 
