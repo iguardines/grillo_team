@@ -42,7 +42,7 @@ async def notify_users():
 
 async def notify_price():
     if USERS == 1:  
-        message = get_btc_ars_price()
+        message = get_btc_usd_price()
         await asyncio.wait([user.send(message) for user in USERS])
 
 
