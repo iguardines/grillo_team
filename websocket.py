@@ -65,7 +65,9 @@ async def counter(websocket, path):
                 STATE["value"] += 1
                 await notify_state()
             elif data["action"] == "suscribe":
-                await notify_price()
+                while True:
+                  await notify_price()
+                  time.sleep(10)
             else:
                 logging.error("unsupported event: {}", data)
     finally:
