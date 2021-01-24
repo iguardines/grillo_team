@@ -89,7 +89,7 @@ async def counter(websocket, path):
                 await notify_state()
             elif data["action"] == "suscribe":
                 data_market_lis_users.add(websocket)
-                if len (USERS) == 1
+                if len (USERS) == 1:
                   while True:
                     await notify_price()
                     await asyncio.sleep(10)
