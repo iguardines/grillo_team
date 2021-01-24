@@ -5,9 +5,7 @@ import json
 import logging
 import websockets
 import requests as rq
-import csv
-import json
-from datetime import datetime as dt
+import mockData as md
 
 logging.basicConfig()
 
@@ -16,20 +14,7 @@ STATE = {"value": 0}
 USERS = set()
 data_market_channel_users = set()
 
-def get_mock_data_market():
-  while True:
-    with open('Evolucion_index_20201217.csv', 'r') as file:
-        reader = csv.reader(file)
-        next(reader, None)
-        for row in reader:
-          try:
-            eachRow = {'IndiceBTCMtR': row[0], 'LiquidezMedida': row[1], 'CostofTrade': row[2], 'time': str(dt.now())}
-            yield eachRow
-          except StopIteration:
-            pass
-
-
-mock_data_generator = get_mock_data_market()
+mock_data_generator = md.get_mock_data_market()
 
 
 def get_btc_usd_price_bitfinex():
