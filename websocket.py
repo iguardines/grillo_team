@@ -14,7 +14,7 @@ logging.basicConfig()
 STATE = {"value": 0}
     
 USERS = set()
-data_market_lis_users = set()
+data_market_channel_users = set()
 
 def get_mock_data_market():
   while True:
@@ -47,12 +47,6 @@ def users_event():
     return json.dumps({"type": "users", "count": len(USERS)})
 
 
-async def notify_state():
-    if USERS:  # asyncio.wait doesn't accept an empty list
-        message = state_event()
-        await asyncio.wait([user.send(message) for user in USERS])
-
-
 async def notify_users():
     if USERS:  # asyncio.wait doesn't accept an empty list
         message = users_event()
@@ -61,7 +55,7 @@ async def notify_users():
 async def notify_price():
     if USERS:  
         message = json.dumps(next(mock_data_generator))
-        await asyncio.wait([user.send(message) for user in USERS])
+        await asyncio.wait([user.send(message) for user in data_market_channel_users])
 
 
 async def register(websocket):
@@ -78,17 +72,12 @@ async def counter(websocket, path):
     # register(websocket) sends user_event() to websocket
     await register(websocket)
     try:
-        await websocket.send(state_event())
+        #await websocket.send(state_event())
         async for message in websocket:
             data = json.loads(message)
-            if data["action"] == "minus":
-                STATE["value"] -= 1
-                await notify_state()
-            elif data["action"] == "plus":
-                STATE["value"] += 1
-                await notify_state()
-            elif data["action"] == "suscribe":
-                data_market_lis_users.add(websocket)
+            if data["action"] == "suscribe":
+                data_market_channel_users.add(websocket)
+                logging.info(f"agregando usuario al canal de suscribe mtrBtc, cantidad de usuarios: {len(data_market_channel_users)}")
                 if len (USERS) == 1:
                   while True:
                     await notify_price()
