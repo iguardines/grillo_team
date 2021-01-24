@@ -7,7 +7,7 @@ import websockets
 import requests as rq
 import csv
 import json
-
+from datetime import datetime as dt
 
 logging.basicConfig()
 
@@ -23,7 +23,7 @@ def get_mock_data_market():
         next(reader, None)
         for row in reader:
           try:
-            eachRow = {'IndiceBTCMtR': row[0], 'LiquidezMedida': row[1], 'CostofTrade': row[2], 'time': row[3]}
+            eachRow = {'IndiceBTCMtR': row[0], 'LiquidezMedida': row[1], 'CostofTrade': row[2], 'time': str(dt.now())}
             yield eachRow
           except StopIteration:
             pass
