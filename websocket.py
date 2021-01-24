@@ -15,9 +15,6 @@ STATE = {"value": 0}
     
 USERS = set()
 
-mock_data_generator = get_mock_data_market()
-
-
 
 def get_mock_data_market():
   while True:
@@ -30,6 +27,10 @@ def get_mock_data_market():
             yield eachRow
           except StopIteration:
             pass
+
+
+mock_data_generator = get_mock_data_market()
+
 
 def get_btc_usd_price_bitfinex():
     return rq.get("https://api.bitfinex.com/v1/pubticker/btcusd").json()
