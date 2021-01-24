@@ -14,7 +14,7 @@ logging.basicConfig()
 STATE = {"value": 0}
     
 USERS = set()
-
+data_market_lis_users = set()
 
 def get_mock_data_market():
   while True:
@@ -88,10 +88,13 @@ async def counter(websocket, path):
                 STATE["value"] += 1
                 await notify_state()
             elif data["action"] == "suscribe":
-                while True:
-                  await notify_price()
-                  await asyncio.sleep(10)
+                data_market_lis_users.add(websocket)
+                if len (USERS) == 1
+                  while True:
+                    await notify_price()
+                    await asyncio.sleep(10)
             else:
+                await unregister(websocket)
                 logging.error("unsupported event: {}", data)
     finally:
         await unregister(websocket)
