@@ -6,6 +6,7 @@ import logging
 import websockets
 import requests as rq
 import csv
+import json
 
 
 logging.basicConfig()
@@ -14,16 +15,21 @@ STATE = {"value": 0}
     
 USERS = set()
 
+mock_data_generator = get_mock_data_market()
 
-async def get_mock_data_market(): 
+
+
+def get_mock_data_market():
   while True:
     with open('Evolucion_index_20201217.csv', 'r') as file:
         reader = csv.reader(file)
+        next(reader, None)
         for row in reader:
+          try:
             eachRow = {'IndiceBTCMtR': row[0], 'LiquidezMedida': row[1], 'CostofTrade': row[2], 'time': row[3]}
-            await eachRow
-            await asyncio.sleep(3)
-
+            yield eachRow
+          except StopIteration:
+            pass
 
 def get_btc_usd_price_bitfinex():
     return rq.get("https://api.bitfinex.com/v1/pubticker/btcusd").json()
@@ -53,7 +59,7 @@ async def notify_users():
 
 async def notify_price():
     if USERS:  
-        message = await asyncio.wait(get_mock_data_market())
+        message = json.dumps(next(mock_data_generator))
         await asyncio.wait([user.send(message) for user in USERS])
 
 
