@@ -4,14 +4,26 @@ import asyncio
 import json
 import logging
 import websockets
-import time
 import requests as rq
+import csv
+
 
 logging.basicConfig()
 
 STATE = {"value": 0}
-
+    
 USERS = set()
+
+
+async def get_mock_data_market(): 
+  while True:
+    with open('Evolucion_index_20201217.csv', 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            eachRow = {'IndiceBTCMtR': row[0], 'LiquidezMedida': row[1], 'CostofTrade': row[2], 'time': row[3]}
+            await eachRow
+            await asyncio.sleep(3)
+
 
 def get_btc_usd_price_bitfinex():
     return rq.get("https://api.bitfinex.com/v1/pubticker/btcusd").json()
@@ -41,7 +53,7 @@ async def notify_users():
 
 async def notify_price():
     if USERS:  
-        message = get_btc_usd_price()
+        message = await asyncio.wait(get_mock_data_market())
         await asyncio.wait([user.send(message) for user in USERS])
 
 
@@ -71,7 +83,7 @@ async def counter(websocket, path):
             elif data["action"] == "suscribe":
                 while True:
                   await notify_price()
-                  time.sleep(10)
+                  await asyncio.sleep(10)
             else:
                 logging.error("unsupported event: {}", data)
     finally:
